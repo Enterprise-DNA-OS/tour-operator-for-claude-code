@@ -117,7 +117,7 @@ The fixture is illustrative, not a customer export. The supported report imports
 
 ## Validation
 
-npm test uses a temporary database and clears inherited DATABASE_URL so it cannot seed live data. It exercises all reads and writes, negative cases, capacity, currency conversion, transactional import, duplicate detection, drafts and record security. TEST_DATABASE_URL may point to an empty disposable PostgreSQL database for parity checks. The suite uses Node APIs and works without platform-specific shell commands. Windows and Linux jobs are included in .github/workflows/test.yml.
+npm test uses a temporary database and clears inherited DATABASE_URL so it cannot seed live data. It exercises all reads and writes, negative cases, capacity, currency conversion, transactional import, duplicate detection, drafts and record security. TEST_DATABASE_URL may point to an empty disposable PostgreSQL database for parity checks. The suite uses Node APIs and works without platform-specific shell commands. Windows and Linux jobs are included in .github/workflows/ci.yml.
 
 Generated documents, reports, private imports and exports are ignored by Git. All drafts remain local until a person approves and sends them through their own system.
 
