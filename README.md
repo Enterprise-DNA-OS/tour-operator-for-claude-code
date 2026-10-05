@@ -1,115 +1,124 @@
-<h1 align="center">Tour Operator for Claude Code</h1>
+# Tour Operator for Claude Code
 
-<p align="center">
-  <strong>The open-source tour operator and DMC reservation system that is just a database and Claude Code.</strong>
-</p>
+Supplier rates, allotments, quotes, departures and travel documents in a database you own. MIT licensed code from Enterprise DNA. Works with Claude Code, Codex, OpenCode or Cursor.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
-
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Tourplan data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=tourplan">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/tourplan?utm_source=github&utm_medium=readme&utm_campaign=tourplan">How it works</a></td>
-  </tr>
-</table>
-
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-tourplan">Instead of Tourplan</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
-
----
-
-## What is this
-
-Tour Operator for Claude Code does the job you pay Tourplan for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Tourplan dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Tourplan per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=tourplan).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free code. Install and operate it. Hosting and agent costs remain yours. | Your fields, operating rules, screens, connections and Tourplan data mapping. [Discuss your version](https://enterprisedna.co/omni/book?offer=replace-software&utm_campaign=tourplan&utm_medium=github). | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. [See the offer](https://enterprisedna.co/omni/instead-of/tourplan). |
 
 ## Quick start
-
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/tour-operator-for-claude-code.git
 cd tour-operator-for-claude-code
 npm install
 npm run demo
+npm test
+npm run tours -- departures
+npm run view
+npm run docs
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Node 20 or newer. The demo uses PGlite locally and fictional NZ tour records, including overdue confirmations, expired quotes, unsold hotel rooms and missing evidence. The seed is idempotent. Never seed a live operator database. Start with /departures, /supplier-chase and /release-dates.
 
-### Use it with your own Postgres or Supabase
+For PostgreSQL 15 or newer, set DATABASE_URL through your environment and run npm run migrate. The tours schema has row security enabled without public access policies. Views respect caller permissions. The database owner connection is for controlled operator use. Shared deployment requires staff identity, permissions, encrypted backups, monitoring and business validation. Local PGlite supports one process at a time.
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## What this base does
 
-## The commands
+Nine record types cover suppliers, products, dated rates, bookings, allotments, services, passengers, append-only notes and import provenance. Four database views join these records for service detail, margins, room release and evidence checks. Services reject out-of-range dates and allotment overbooking. Every cost uses a recorded exchange rate. No cross-currency totals are added together.
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+Twenty read commands cover the booking register, upcoming departures, quote follow-up, supplier chasing, release dates, margins, deposit balances, cancellation deadlines and passenger counts. Four document families produce draft itineraries, rooming lists, booking costings and confirmed-service vouchers in your brand. Reports are read-only files, not a reservation front end.
 
-| Command | What it does |
+This is an operations base, not a reproduction of every Tourplan module. It has no live supplier availability, distribution API, accounting ledger, payment processing or offline/mobile booking interface. Those integrations and screens need separate implementation and validation. Imported Tour Summary financial amounts are retained snapshots, not posted accounting transactions.
+
+Tourplan's own [pricing FAQ](https://www.tourplan.com/resources/frequently-asked-questions/) lists cloud subscriptions starting at US$1,000 per month, with price determined by edition and concurrent users, checked 5 October 2026. Twelve months at that starting rate is US$12,000. The free code has no licence fee. Running and supporting it still costs money.
+
+## Weekly operator jobs
+
+| Recipe | Job |
 |---|---|
-| `/...` | ... |
+| /supplier-check | Record a verified supplier registration reference, expiry and check date. |
+| /suppliers | Review supplier contacts and recorded registration dates. |
+| /products | Read the supplier product list by location. |
+| /rates | Review contracted dates, units, costs and cancellation terms. |
+| /bookings | Read the booking register. |
+| /departures | Review confirmed departures in the next thirty days. |
+| /services | Read the itinerary services and confirmations. |
+| /supplier-chase | Find requested services and the supplier who must confirm them. |
+| /release-dates | Review held allotments approaching release and the unsold units. |
+| /margin-watch | Compare service costs and selling amounts by booking currency. Zero services means missing cost detail. |
+| /quote-followup | Review quote expiry and days since last contact. |
+| /deposits-due | Review deposits due after externally reconciled receipts. |
+| /cancellation-watch | Review contractual cancellation deadlines in the next seven days. |
+| /rooming-list | Read recorded passenger names and room assignments. |
+| /manifest-gaps | Compare named passengers with expected group sizes. |
+| /supplier-exposure | Group confirmed commitments by supplier and supplier currency. |
+| /agent-margin | Compare current service margins by agent and currency. |
+| /unconfirmed-low-margin | Find confirmed departures with thin margins and unconfirmed services. |
+| /imported-summaries | Read financial snapshots from the Tourplan export separately from current service costing. |
+| /compliance | Read docs/compliance.md, then identify missing evidence. Do not call a clear list legal approval. |
+| /attention | Collect overdue confirmations, releases, deposits and quotes. |
+| /booking | Run `npm run tours -- booking "<code, name or UUID prefix>"`. Read the booking, services, passengers and notes before drafting. If ambiguous, show the candidates and resolve the reference. |
+| /add | Read docs/cli.md and the migration. Put supplied fields in a private JSON file, then run `npm run tours -- add <type> --data=imports/record.json`. Read the result back. Never infer supplier terms or exchange rates. |
+| /log | Read the booking first. Run `npm run tours -- log <booking> --author="<recorder>" --text="<observed event>"`. Notes are append-only. Corrections are new notes naming the earlier entry. |
+| /confirm | Read the service and actual supplier evidence. Run `npm run tours -- confirm <service> --reference="<confirmation reference>"`. Recording evidence sends no booking request. |
+| /service-status | Read the service. Record a supplied event with `npm run tours -- service-status <service> --status=requested or cancelled`. No cancellation notice is sent. |
+| /booking-status | Read the booking and all services. Run `npm run tours -- booking-status <booking> --status=quote or confirmed or completed or cancelled`. Cancellation changes local services too. Supplier cancellation and fees need separate review. |
+| /terms | Read the booking and accepted terms evidence. Run `npm run tours -- terms <booking> --reference="<evidence>"`. Never treat a draft as acceptance. |
+| /record-receipt | Reconcile against the external account first. Run `npm run tours -- record-receipt <booking> --cents=<cumulative_received_total>`. This sets a cumulative total and writes a note. It does not take payment. |
+| /release | Read release-dates and the allotment. Run `npm run tours -- release <allotment>`. Only unsold units are removed from local capacity. Tell the operator the hotel has not been notified. |
+| /import | Read docs/replace-tourplan.md. Export the documented Tour Summary CSV with booking currency and costs. Run `npm run tours -- import tourplan --file=imports/tour-summary.csv --dry-run`, reconcile the fields, then repeat without --dry-run. Do not promise services or passenger names from a summary. |
+| /export | Create a private exports directory. Run `npm run tours -- export --out=exports/new-backup.json`. Verify all nine record types. Keep a database backup too. Never publish customer records. |
+| /weekly-review | Run `npm run tours -- attention`, `npm run tours -- margin-watch` and `npm run tours -- compliance`. Name the departures, deadlines, currencies and missing evidence. Read booking details for exceptions. Save with draft-weekly. |
+| /draft-weekly | Run `npm run tours -- draft-weekly`. Inspect the Markdown in drafts/. It uses current attention, margin-watch and compliance results. Nothing sends. |
+| /documents | Set brand.json to the business identity. Run `npm run docs` and inspect the itinerary, rooming list, costing and voucher drafts. A requested service cannot become a confirmed voucher. Nothing sends. |
+| /new-view | Read views.json and the existing database views. Add a fixed read-only query for the requested report, then run `npm run view` and `npm test`. Inspect the HTML. Keep customer data local. |
+| /customise | Read the schema and export a backup first. Write a new numbered migration for the requested field, stage or rule. Apply with `npm run migrate`. Update the CLI allowlist, query, document and recipe as needed. Run `npm test` and demonstrate the changed workflow. Never edit an applied migration or invent records. |
 
-## Instead of tourplan
+## Ten questions across your records
 
-<!-- TODO(author): how to bring data across from Tourplan; link docs/replace-tourplan.md -->
+These questions are implemented in this base. Tourplan offers custom reporting, so this is not a claim that it cannot produce equivalent reports. Here you can change the questions and the records together.
 
-## Architecture
+1. Which departures have unconfirmed services and less than twenty percent margin? (`unconfirmed-low-margin`)
+2. Which hotel blocks still have unsold rooms at their release date? (`release-dates`)
+3. Which confirmed groups have fewer named travellers than expected? (`manifest-gaps`)
+4. Which agent produces the recorded margin in each currency? (`agent-margin`)
+5. Which supplier holds the largest confirmed commitments in its own currency? (`supplier-exposure`)
+6. Which departures have unpaid deposits approaching their due date? (`deposits-due`)
+7. Which requested services are near a cancellation deadline? (`supplier-chase`)
+8. Which quotes are expired and have gone quiet? (`quote-followup`)
+9. Which adventure supplier records lack registration evidence for the trip date? (`compliance`)
+10. How do imported booking totals compare with the services now recorded? (`imported-summaries and margin-watch`)
 
+## Your first hour: ten things to ask for
+
+1. Put our name and logo on the itinerary.
+2. Add our supplier contract reference.
+3. Use our booking stages.
+4. Load a checked sample of our Tour Summary export.
+5. Set our deposit review window.
+6. Add our hotel release wording.
+7. Group departure reports by consultant.
+8. Add our passenger room labels.
+9. Record our supplier evidence policy.
+10. Draft Monday's supplier follow-up list.
+
+/customise writes and applies a migration. /new-view adds a report. Read [the CLI guide](docs/cli.md), [switch guide](docs/replace-tourplan.md), [record checks](docs/compliance.md) and [why there is no front end](docs/why-no-front-end.md).
+
+## Bring your booking history
+
+```bash
+npm run tours -- import tourplan --file=examples/tourplan-summary.csv --dry-run
+npm run tours -- import tourplan --file=examples/tourplan-summary.csv
+npm run tours -- imported-summaries
 ```
-tour-operator-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
 
-## Built for coding agents
+The fixture is illustrative, not a customer export. The supported report imports booking headers and financial snapshots only. Supplier contracts, services, allotments and passenger manifests need separate exports and mapping. Dry runs roll back. Repeated identical records skip. Changed records stop the entire import for reconciliation.
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+## Validation
 
-## Contributing
+npm test uses a temporary database and clears inherited DATABASE_URL so it cannot seed live data. It exercises all reads and writes, negative cases, capacity, currency conversion, transactional import, duplicate detection, drafts and record security. TEST_DATABASE_URL may point to an empty disposable PostgreSQL database for parity checks. The suite uses Node APIs and works without platform-specific shell commands. Windows and Linux jobs are included in .github/workflows/test.yml.
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+Generated documents, reports, private imports and exports are ignored by Git. All drafts remain local until a person approves and sends them through their own system.
 
-## Want it installed and run for you?
-
-Enterprise DNA installs Tour Operator for Claude Code for your business, migrates your Tourplan data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
-
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=tourplan)
-- Read more: [enterprisedna.co/omni/instead-of/tourplan](https://enterprisedna.co/omni/instead-of/tourplan?utm_source=github&utm_medium=readme&utm_campaign=tourplan)
-
-## License
-
-MIT. Copyright (c) 2026 Enterprise DNA.
+Built by Enterprise DNA. Tourplan is a third-party trademark. This independent project is not affiliated with Tourplan.

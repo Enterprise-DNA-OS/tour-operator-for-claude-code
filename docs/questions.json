@@ -1,0 +1,42 @@
+[
+  [
+    "Which departures have unconfirmed services and less than twenty percent margin?",
+    "unconfirmed-low-margin"
+  ],
+  [
+    "Which hotel blocks still have unsold rooms at their release date?",
+    "release-dates"
+  ],
+  [
+    "Which confirmed groups have fewer named travellers than expected?",
+    "manifest-gaps"
+  ],
+  [
+    "Which agent produces the recorded margin in each currency?",
+    "agent-margin"
+  ],
+  [
+    "Which supplier holds the largest confirmed commitments in its own currency?",
+    "supplier-exposure"
+  ],
+  [
+    "Which departures have unpaid deposits approaching their due date?",
+    "deposits-due"
+  ],
+  [
+    "Which requested services are near a cancellation deadline?",
+    "supplier-chase"
+  ],
+  [
+    "Which quotes are expired and have gone quiet?",
+    "quote-followup"
+  ],
+  [
+    "Which adventure supplier records lack registration evidence for the trip date?",
+    "compliance"
+  ],
+  [
+    "How do imported booking totals compare with the services now recorded?",
+    "imported-summaries and margin-watch"
+  ]
+]

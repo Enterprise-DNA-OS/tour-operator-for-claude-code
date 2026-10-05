@@ -1,13 +1,20 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Tour Operator for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Tour operations week",
+    "subtitle": "Read-only report. Fictional demo until your records are imported.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Departures",
+        "sql": "select code,name,travel_date,pax,awaiting_confirmation,currency,margin_cents from tours.booking_margins where status='confirmed' and travel_date between current_date and current_date+30 order by travel_date"
+      },
+      {
+        "title": "Release dates",
+        "sql": "select code,product,service_date,release_on,units,allocated,unsold from tours.release_queue where status='held' order by release_on"
+      },
+      {
+        "title": "Record checks",
+        "sql": "select * from tours.record_checks order by rule,record"
       }
     ]
   }

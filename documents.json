@@ -1,11 +1,74 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "itinerary",
+    "title": "DRAFT travel itinerary",
+    "for_each": "select id,code from tours.bookings where status<>'cancelled' order by code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Booking",
+        "sql": "select code,name,travel_date,end_date,pax from tours.bookings where id=$1",
+        "note": "Confirm dates and passenger details before issuing."
+      },
+      {
+        "title": "Services",
+        "sql": "select service_date,product,location,supplier,units,unit,status,confirmation_ref from tours.service_detail where booking_id=$1 and status<>'cancelled' order by service_date,code",
+        "note": "Requested services are not confirmed reservations."
+      }
+    ]
+  },
+  {
+    "name": "rooming-list",
+    "title": "DRAFT rooming list",
+    "for_each": "select id,code from tours.bookings where status<>'cancelled' order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Group",
+        "sql": "select code,name,pax from tours.bookings where id=$1",
+        "note": "Check the passenger count. This list contains only recorded names."
+      },
+      {
+        "title": "Rooms",
+        "sql": "select code,name,room from tours.passengers where booking_id=$1 order by room,name",
+        "note": "Share only with the suppliers who need these details."
+      }
+    ]
+  },
+  {
+    "name": "costing",
+    "title": "DRAFT booking costing",
+    "for_each": "select id,code from tours.bookings where status<>'cancelled' order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Current services",
+        "sql": "select code,name,currency,service_count,revenue_cents,cost_cents,margin_cents,margin_pct from tours.booking_margins where id=$1",
+        "note": "Service costing uses recorded exchange rates. Missing services are not zero-cost bookings."
+      },
+      {
+        "title": "Imported snapshot",
+        "sql": "select source_status,currency,summary_sell_cents,summary_cost_cents,summary_commission_cents,summary_invoiced_cents,summary_receipted_cents from tours.bookings where id=$1",
+        "note": "Imported Tour Summary amounts are separate snapshots, not a ledger or live service total."
+      },
+      {
+        "title": "Cost lines",
+        "sql": "select code,product,units,supplier_currency,(buy_cents::numeric/100) unit_buy_in_supplier_currency,fx,currency,cost_cents,revenue_cents from tours.service_detail where booking_id=$1 and status<>'cancelled' order by service_date,code",
+        "note": "Buy amounts are in supplier currency. Converted cost and revenue are in booking currency."
+      }
+    ]
+  },
+  {
+    "name": "voucher",
+    "title": "DRAFT supplier voucher",
+    "for_each": "select id,code from tours.services where status='confirmed' order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Confirmed service",
+        "sql": "select booking,booking_name,service_date,product,supplier,location,units,unit,confirmation_ref from tours.service_detail where id=$1",
+        "note": "A draft document of an existing confirmation. Not sent and not authority to charge."
+      }
     ]
   }
 ]
